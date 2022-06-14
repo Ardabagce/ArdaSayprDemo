@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
 import './App.css';
-import axios from 'axios'
-import 'bootstrap/dist/css/bootstrap.min.css';
+import axios from 'axios';
+import { Row, Col } from 'antd';
+import Person from './components/Person';
+
 
 class App extends Component {
 
@@ -16,7 +18,22 @@ class App extends Component {
         const users = res.data;
         this.setState({ users });
       })}, 2000);
-  }
+    }
+      deleteUser = (id) => {
+        this.setState((prevState) => ({
+          users: prevState.users.filter((entry) => entry.id !== id),
+        }));
+      };
+    
+      updateUser = (id, data) => {
+        this.setState((prevState) => ({
+          users: prevState.users.map((entry) => {
+            if (entry.id === id) return { ...entry, ...data };
+            return entry;
+          }),
+        }));
+      };
+      debugger;
   render() {
     const { users } = this.state;
 
@@ -30,44 +47,14 @@ class App extends Component {
     }
 
     return (
-      <div className="container">
-        {users.map((user) => (
-          <div className="ec-card" style={{ padding: 10, margin: '20px 0' }}>
-            <div className="row">
-              <div className="col-auto">
-                <img
-                  src={`https://avatars.dicebear.com/v2/avataaars/${user.username}.svg?options[mood][]=happy`}
-                  alt="Profile Pic"
-                  style={{ width: 200, height: 200 }}
-                />
-              </div>
-              <div className="col">
-                <h2>{user.name}</h2>
-                <p>
-                  <strong>Email: </strong>
-                  {user.email}
-                </p>
-                <p>
-                  <strong>Phone: </strong>
-                  {user.phone}
-                </p>
-                <p>
-                  <strong>Address: </strong>
-                  {user.address.street}, {user.address.suite}, {user.address.city}, {user.address.zipcode}
-                </p>
-                <p>
-                  <strong>Website: </strong>
-                  {user.website}
-                </p>
-                <p>
-                  <strong>Company: </strong>
-                  {user.company.name}
-                </p>
-              </div>
-            </div>
-          </div>
-        ))}
-      </div>
+      
+      <Row>
+       {users.map((user) => (
+        <Col xs={24} sm={24} md={8} lg={8} xl={6} key={user.username}>
+          <Person user={user} deleteUser={this.deleteUser} updateUser={this.updateUser} />
+        </Col>
+      ))} 
+    </Row>
     );
   }
 }
